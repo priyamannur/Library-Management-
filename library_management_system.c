@@ -9,7 +9,7 @@ struct book{
     char name[30];
     char author[30];
     int id;
-   
+    int copies;
     struct book *next;
 };
 
@@ -30,7 +30,7 @@ struct book *initialize_lib(struct book *);
 struct student *book_issue(struct student *); 
 struct student *book_return(struct student *); 
 struct book *diplay_lib(struct book *); 
-struct book *delete_book(int);  
+struct book *delete_book(int id, struct book *);  
 struct book *add_book(char [],char [],int);
 void display(struct student *);
 void greetings();
@@ -69,7 +69,7 @@ void greetings(){
     printf("\t\t\t     *       ------------------------       *\n");
     printf("\t\t\t     *                                      *\n");
     printf("\t\t\t     *                                      *\n");
-    printf("\t\t\t     *      Dharwad, Karnataka,India       *\n");
+    printf("\t\t\t     *      Dharwad, Karnataka,India        *\n");
     printf("\t\t\t     *     Email: studentlib@gmail.com      *\n");
     printf("\t\t\t     *     Contact:8800991010,8800992020    *\n");
     printf("\t\t\t     *                                      *\n");
@@ -125,6 +125,7 @@ struct book *initialize_lib(struct book *start){
     strcpy(new_book1->name,"The Kite Runner");
     strcpy(new_book1->author,"Khaled Hosseini");
     new_book1->id=101;
+    new_book1->copies = 4;
     ptr=new_book1;
 
     new_book2=(struct book*)malloc(sizeof(struct book));
@@ -132,6 +133,7 @@ struct book *initialize_lib(struct book *start){
     strcpy(new_book2->name,"To Kill A Mockingbird");
     strcpy(new_book2->author,"Harper Lee");
     new_book2->id=102;
+    new_book2->copies = 4;
     ptr->next=new_book2;
     ptr=new_book2;
 
@@ -140,6 +142,7 @@ struct book *initialize_lib(struct book *start){
     strcpy(new_book3->name,"The Alchemist");
     strcpy(new_book3->author,"Paulo Coelho");
     new_book3->id=103;
+    new_book3->copies = 4;
     ptr->next=new_book3;
     ptr=new_book3;
 
@@ -148,6 +151,7 @@ struct book *initialize_lib(struct book *start){
     strcpy(new_book4->name,"Pride And Prejudice");
     strcpy(new_book4->author,"Jane Austen");
     new_book4->id=104;
+    new_book4->copies = 4;
     ptr->next=new_book4;
     ptr=new_book4;
 
@@ -156,6 +160,7 @@ struct book *initialize_lib(struct book *start){
     strcpy(new_book5->name,"A Tale Of Two Cities");
     strcpy(new_book5->author,"Charles Dickens");
     new_book5->id=105;
+    new_book5->copies = 4;
     ptr->next=new_book5;
 
     return start_lib;
@@ -180,6 +185,7 @@ struct student *book_issue(struct student *start){
             printf("\n\t Book Title: %s",ptr->name);
             printf("\n\t Name of Author: %s",ptr->author);
             printf("\n\t Book ID: %d",ptr->id);
+	    printf("\n\t No of copies available : %d",ptr->copies);
             printf("\n\t_________________\n");
             ptr=ptr->next;
             i++;
@@ -232,7 +238,8 @@ struct student *book_issue(struct student *start){
                 }
                 ptr2->next=new_student;
             }
-            start_lib=delete_book(new_student->id);
+	    struct book* temp = ptr;
+            start_lib=delete_book(new_student->id,temp);
             printf("\n\n\t Press any key to go to the main menu: ");
             getch();
             system("cls");
@@ -343,7 +350,7 @@ void display(struct student *start){
     system("cls");
 }
 
-struct book *delete_book(int id){
+struct book *delete_book(int id, struct book *del){
     struct book *ptr,*preptr;
     int c=0;
     ptr=start_lib;
@@ -351,6 +358,7 @@ struct book *delete_book(int id){
         c++;
         ptr=ptr->next;
     }
+    if(del->copies==1){
     if(c==1){
         ptr=start_lib;
         start_lib=NULL;
@@ -367,6 +375,10 @@ struct book *delete_book(int id){
         }
         preptr->next=ptr->next;
         free(ptr);
+    }
+    }
+    else{
+	    del->copies= del->copies-1;
     }
     return start_lib;
 }
