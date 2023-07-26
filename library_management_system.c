@@ -21,6 +21,7 @@ struct student{
     int id;
     int issue_day ,issue_mon , issue_year ;
     char reservation;
+    char category[4];
     struct student *next;
 };
 
@@ -216,6 +217,8 @@ struct student *book_issue(struct student *start){
             scanf("%s",new_student->email);
 	    printf("\n\t Enter 'Y/y' if reservation, else 'N/n': ");
 	    scanf(" %c",&new_student->reservation);
+	    printf("\n\t Enter you category (APL/BPL)*case sesnsitive(ALL CAPS): ");
+	    scanf(" %s",new_student->category);
             strcpy(new_student->book,ptr->name);
             strcpy(new_student->a,ptr->author);
             new_student->id=ptr->id;
@@ -340,6 +343,7 @@ void display(struct student *start){
         printf("\n\t\t Name of Book Issued: %s",ptr->book);
         printf("\n\t\t Book ID: %d",ptr->id);
 	printf("\n\t\t Reservation (Y/y - yes,N/n-No): %c",ptr->reservation);
+	printf("\n\t\t Category : %s",ptr->category);
         printf("\n\t\t Issue date ID: %d/%d/%d",ptr->issue_day,ptr->issue_mon, ptr->issue_year);
         book_return_date(ptr->issue_day,ptr->issue_mon, ptr->issue_year,ptr);
         delay(ptr->issue_day,ptr->issue_mon, ptr->issue_year, ptr);
@@ -466,19 +470,19 @@ int date_to_noOfDays(int day , int mon ,int year){
 
      return date;
 }
-void book_return_date(int date , int mon , int year,struct student* ptr){
+void book_return_date(int date , int mon , int year, struct student* ptr){
     	int var;
-	if(ptr->reservation=='N'||ptr->reservation=='n'){
+	if((ptr->reservation=='N'||ptr->reservation=='n')&& (strcmp(ptr->category,"APL")==0)){
 	    var = 15;
 	}
-	else if(ptr->reservation=='y' || ptr->reservation=='Y'){
+	else if(ptr->reservation=='y' || ptr->reservation=='Y'|| strcmp(ptr->category,"BPL")==0){
 		var= 30;
 }
     if(mon == 1 || mon == 3 || mon == 5|| mon == 7 ||mon == 8 ||mon == 10){
             date = date+var;
 	    while(date > 31){
-                date = date-31; 
                 mon++;
+		date = date - 31;
             }
     }
 
