@@ -41,7 +41,7 @@ void main_menu();
 int is_leap_year(int);
 int date_to_noOfDays(int, int, int);
 void book_return_date(int , int , int,struct student *);
-void delay(int, int , int);
+void delay(int, int , int,struct student *);
 
 
 int main(){
@@ -342,7 +342,7 @@ void display(struct student *start){
 	printf("\n\t\t Reservation (Y/y - yes,N/n-No): %c",ptr->reservation);
         printf("\n\t\t Issue date ID: %d/%d/%d",ptr->issue_day,ptr->issue_mon, ptr->issue_year);
         book_return_date(ptr->issue_day,ptr->issue_mon, ptr->issue_year,ptr);
-        delay(ptr->issue_day,ptr->issue_mon, ptr->issue_year);
+        delay(ptr->issue_day,ptr->issue_mon, ptr->issue_year, ptr);
         printf("\n\t_________________\n");
         printf("\n\n\t*****************\n");
         ptr=ptr->next;
@@ -524,7 +524,14 @@ void book_return_date(int date , int mon , int year,struct student* ptr){
 
 }
 
-void delay (int date , int mon , int year){
+void delay (int date , int mon , int year,struct student *ptr){
+	int var;
+	if(ptr->reservation=='N'||ptr->reservation=='n'){
+	    var = 15;
+	}
+	else if(ptr->reservation=='y' || ptr->reservation=='Y'){
+		var= 30;
+}    
     time_t t;
     t = time(NULL);
     struct tm tm = *localtime(&t);
@@ -539,8 +546,8 @@ void delay (int date , int mon , int year){
         difference = (365*y) + todaydate - issuedate ;
 
 
-    if(difference > 15){
-        printf("\n\t\t The book is due from %d days" ,difference-15);
+    if(difference > var){
+        printf("\n\t\t The book is due from %d days" ,difference-var);
     }
 
     else 
