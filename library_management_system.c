@@ -4,7 +4,7 @@
 #include <malloc.h>
 #include <string.h>
 #include<time.h> 
-
+#include<stdbool.h>
 struct book{
     char name[30];
     char author[30];
@@ -20,6 +20,7 @@ struct student{
     char a[30];
     int id;
     int issue_day ,issue_mon , issue_year ;
+    char reservation;
     struct student *next;
 };
 
@@ -39,7 +40,7 @@ void main_menu();
 
 int is_leap_year(int);
 int date_to_noOfDays(int, int, int);
-void book_return_date(int , int , int);
+void book_return_date(int , int , int,struct student *);
 void delay(int, int , int);
 
 
@@ -213,6 +214,8 @@ struct student *book_issue(struct student *start){
             scanf("%s",new_student->name);
             printf("\n\t Enter your Email: ");
             scanf("%s",new_student->email);
+	    printf("\n\t Enter 'Y/y' if reservation, else 'N/n': ");
+	    scanf(" %c",&new_student->reservation);
             strcpy(new_student->book,ptr->name);
             strcpy(new_student->a,ptr->author);
             new_student->id=ptr->id;
@@ -336,8 +339,9 @@ void display(struct student *start){
         printf("\n\t\t Student Email: %s",ptr->email);
         printf("\n\t\t Name of Book Issued: %s",ptr->book);
         printf("\n\t\t Book ID: %d",ptr->id);
+	printf("\n\t\t Reservation (Y/y - yes,N/n-No): %c",ptr->reservation);
         printf("\n\t\t Issue date ID: %d/%d/%d",ptr->issue_day,ptr->issue_mon, ptr->issue_year);
-        book_return_date(ptr->issue_day,ptr->issue_mon, ptr->issue_year);
+        book_return_date(ptr->issue_day,ptr->issue_mon, ptr->issue_year,ptr);
         delay(ptr->issue_day,ptr->issue_mon, ptr->issue_year);
         printf("\n\t_________________\n");
         printf("\n\n\t*****************\n");
@@ -383,12 +387,20 @@ struct book *delete_book(int id, struct book *del){
     return start_lib;
 }
 
-struct book *add_book(char bookname[30],char authorname[30],int id){
+struct book *add_book(char bookname[30],char authorname[30],int ide){
     struct book *ptr,*new_book;
+    ptr = start_lib;
+    while(ptr->id!=ide && ptr!=NULL)
+	    ptr=ptr->next;
+    if(ptr!=NULL){
+	    ptr->copies++;
+    }
+    else{
     new_book=(struct book *)malloc(sizeof(struct book));
     strcpy(new_book->name,bookname);
     strcpy(new_book->author,authorname);
-    new_book->id=id;
+    new_book->id=ide;
+    new_book->copies = 4;
     new_book->next=NULL;
     if(start_lib==NULL){
         start_lib=new_book;
@@ -398,6 +410,7 @@ struct book *add_book(char bookname[30],char authorname[30],int id){
             ptr=ptr->next;
         }
         ptr->next=new_book;
+    }
     }
     return start_lib;
 } 
@@ -453,55 +466,58 @@ int date_to_noOfDays(int day , int mon ,int year){
 
      return date;
 }
-void book_return_date(int date , int mon , int year){
-    
+void book_return_date(int date , int mon , int year,struct student* ptr){
+    	int var;
+	if(ptr->reservation=='N'||ptr->reservation=='n'){
+	    var = 15;
+	}
+	else if(ptr->reservation=='y' || ptr->reservation=='Y'){
+		var= 30;
+}
     if(mon == 1 || mon == 3 || mon == 5|| mon == 7 ||mon == 8 ||mon == 10){
-            if(date+15 > 31){
-                date = date+15-31; 
+            date = date+var;
+	    while(date > 31){
+                date = date-31; 
                 mon++;
             }
-            else 
-                date+=15;
     }
 
     else if (mon == 4||mon == 6||mon == 9||mon == 11){
-            if(date+15 > 30){
-                date = date+15-30; 
+	    date=date+var;
+            while(date > 30){
+                date = date-30; 
                 mon++;
             }
-            else 
-                date+=15;
+          	
     }
 
     
     else if (mon==2){
         if(is_leap_year(year)==1){
-             if(date+15 > 29){
-                date = date+15-29; 
+	    date=date+var;
+            while(date > 29){
+                date = date-29; 
                 mon++;
             }
-            else 
-                date+=15;
         }
-
+	
         else {
-             if(date+15 > 28){
-                date = date+15-28; 
+	    date=date+var;
+            while(date > 28){
+                date = date-28; 
                 mon++;
             }
-            else 
-                date+=15;
         }
     }
     
     else {
-         if(date+15 > 31){
-                date = date+15-31; 
+         if(date+var > 31){
+                date = date+var-31; 
                 mon=1;
                 year++;
             }
             else 
-                date+=15;
+                date+=var;
     }
 
  printf("\n\t\t Return date = %d/%d/%d" , date , mon , year);
@@ -523,7 +539,7 @@ void delay (int date , int mon , int year){
         difference = (365*y) + todaydate - issuedate ;
 
 
-    if(difference > 15 ){
+    if(difference > 15){
         printf("\n\t\t The book is due from %d days" ,difference-15);
     }
 
